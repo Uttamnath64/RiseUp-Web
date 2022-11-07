@@ -1,0 +1,66 @@
+points ->
+
+100 view = 10 point v1
+1k view = 20 point v2
+10k view = 30 point v3
+100k view = 50 point v4
+1m view = 80 point v5
+10m view = 100 point v6
+
+
+$TimeStr="2017-01-01 12:00:00";
+echo date_create($TimeStr)->format("M d, Y");
+
+1 post = 10 point p1
+10 post = 20 point p2
+50 post = 30 point p3
+100 post = 50 point p4
+500 post = 70 point p5
+1k post = 100 point p6
+
+
+100 joiner = 20 point j1
+1k joiner = 50 point j2
+10k joiner = 70 point j3
+100k joiner = 80 point j4
+1m joiner = 90 point j5
+10m joiner = 100 point j6
+
+last 1 month -> 10 post -> 10 rank
+last 1 month -> 10 post -> 10 rank
+
+//views
+$this->db->query('SELECT Id FROM views WHERE Channel_Url = :Url');
+$this->db->bind(':Url',$_SESSION['User_Id']);
+if (count($this->db->resultSet()) >= 10) {
+		$Enable = 1;
+}
+
+//joiner
+$this->db->query('SELECT Id FROM joiner WHERE Channel_Url = :Url');
+$this->db->bind(':Url',$_SESSION['User_Id']);
+if (count($this->db->resultSet()) >= 10) {
+		$Enable = 1;
+}
+
+//articles
+$this->db->query('SELECT Url FROM post WHERE Channel_Url = :Url');
+$this->db->bind(':Url',$_SESSION['User_Id']);
+if (count($this->db->resultSet()) >= 10) {
+		$Enable = 1;
+}
+
+//Likes
+$this->db->query('SELECT Id FROM like_dislike WHERE Like_Dislike = 1 AND Channel_Url = :Url');
+$this->db->bind(':Url',$_SESSION['User_Id']);
+if (count($this->db->resultSet()) >= 10) {
+		$Enable = 1;
+}
+
+//achievement 
+$this->db->query('SELECT SUM(achievement.Points) as Points_sum FROM achievement INNER JOIN achievement_data ON achievement_data.Achievement_Id = achievement.Id WHERE achievement_data.Channel_Url = :Channel_Url');
+$this->db->bind(':Channel_Url', $_SESSION['User_Id']);
+$_AD_Achievement_Points = $this->db->single();
+if ($_AD_Achievement_Points->Points_sum >= 100) {
+		$Enable = 1;
+}
